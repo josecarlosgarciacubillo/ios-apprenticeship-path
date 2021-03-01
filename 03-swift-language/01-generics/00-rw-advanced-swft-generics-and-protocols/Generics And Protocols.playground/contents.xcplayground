@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<playground version='6.0' target-platform='ios'>
+    <pages>
+        <page name='02 - Parametric Polymorphism'/>
+        <page name='03 - Generics Constraints'/>
+        <page name='04 - Associated Types'/>
+        <page name='05 - Challenge'/>
+        <page name='06 - Associated Type Constraints'/>
+        <page name='07 - Conditional Conformance'/>
+        <page name='08 - Challenge'/>
+    </pages>
+</playground>
