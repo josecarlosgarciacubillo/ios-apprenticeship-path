@@ -51,6 +51,13 @@ final class PhotoDetailViewController: UIViewController {
     completion: @escaping (Result<UIImage, FeatureError>) -> ()) {
     // Step 5: Implement this helper method to run faceOverlayImageFrom(_:) on
     // runQueue, then dispatch completion(result) on completionQueue.
+    runQueue.async { [weak self] in
+      guard let self = self else { return }
+      let result = self.faceOverlayImageFrom(self.image)
+      completionQueue.async {
+        completion(result)
+      }
+    }
   }
   
   // MARK: - Lifecycle
@@ -69,25 +76,41 @@ final class PhotoDetailViewController: UIViewController {
     // Step 6: Replace this code block with a call to asyncGooglyEyes(...),
     // moving the switch block into the completion handler.
     // Build and run to check everything works.
+    /*
     DispatchQueue.global(qos: .userInitiated).async { [weak self] in
       guard let self = self else { return }
       // Step 4: Replace the next line with let result = ...
       // then write switch result {...} to process .success and .failure.
       // Build and run to check faceOverlayImageFrom(_:) still works.
-      let overlayImage = self.faceOverlayImageFrom(self.image)
-      DispatchQueue.main.async { [weak self] in
-        self?.fadeInNewImage(overlayImage)
+      let result = self.faceOverlayImageFrom(self.image)
+      switch result {
+      case let .success(overlayImage):
+        DispatchQueue.main.async { [weak self] in
+          self?.fadeInNewImage(overlayImage)
+        }
+      case let .failure(error):
+        print(error)
+      }
+    }
+    */
+    asyncGooglyEyes(image) { result in
+      switch result {
+      case let .success(overlayImage):
+        DispatchQueue.main.async {
+          self.fadeInNewImage(overlayImage)
+        }
+      case let .failure(error):
+        print(error)
       }
     }
   }
-
 }
 
 // MARK: - Private Methods
 
 private extension PhotoDetailViewController {
   // Step 1: Modify this to return Result<UIImage, FeatureError>.
-  func faceOverlayImageFrom(_ image: UIImage) -> UIImage {
+  func faceOverlayImageFrom(_ image: UIImage) -> Result<UIImage, FeatureError> {
     let detector = CIDetector(ofType: CIDetectorTypeFace,
         context: nil, options: [CIDetectorAccuracy: CIDetectorAccuracyHigh])
     
@@ -95,6 +118,9 @@ private extension PhotoDetailViewController {
     let newImage = CIImage(cgImage: image.cgImage!)
     let features = detector?.features(in: newImage) as! [CIFaceFeature]
     // Step 2: Return .failure(.noEyes) if features array is empty.
+    if features.isEmpty {
+      return .failure(.noEyes)
+    }
     
     UIGraphicsBeginImageContext(image.size)
     let imageRect = CGRect(x: 0, y: 0, width: image.size.width, height: image.size.height)
@@ -141,7 +167,7 @@ private extension PhotoDetailViewController {
     UIGraphicsEndImageContext()
 
     // Step 3: Return .success(overlayImage!).
-    return overlayImage!
+    return .success(overlayImage!)
   }
   
   func faceRotationInRadians(leftEyePoint startPoint: CGPoint, rightEyePoint endPoint: CGPoint) -> CGFloat {

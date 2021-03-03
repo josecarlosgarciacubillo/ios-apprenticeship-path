@@ -24,57 +24,69 @@ userQueue.async {
 }
 //: Now create a `DispatchWorkItem`:
 // TODO
-
-
+let workItem = DispatchWorkItem {
+  task1()
+}
 
 //: And execute it on `userQueue`:
 print(">> Run task 1 as a work item.")
 // TODO
+userQueue.async(execute: workItem)
 
 //: If the current thread really needs `workItem` to finish before it can continue, call `.wait` to tell the system to give it priority. If necessary/possible, the system will increase the priority of other tasks in its queue.
 print(">> Waiting for task 1...")
 // TODO
-
-
-
+if workItem.wait(timeout: .now() + 3) == .timedOut {
+  print("I got tired of waiting")
+} else {
+  print("Work item completed")
+}
 
 sleep(2)  // give task 1 time to finish
 //: Other advantages of work items: You can construct a simple dependency, for example, to update task 1 after it completes, and you can cancel work items.
 enum Queues { case mainQ, userQ }
 // TODO later: Set specific key for each queue.
+let specificKey = DispatchSpecificKey<Queues>()
+mainQueue.setSpecific(key: specificKey, value: .mainQ)
+userQueue.setSpecific(key: specificKey, value: .userQ)
 
-//func whichQueue(workItem: String) {
-//  switch DispatchQueue.getSpecific(key: specificKey) {
-//  case .mainQ:
-//    print(">> \(workItem) is running on mainQueue")
-//  case .userQ:
-//    print(">> \(workItem) is running on userQueue")
-//  case .none:
-//    break
-//  }
-//}
+func whichQueue(workItem: String) {
+  switch DispatchQueue.getSpecific(key: specificKey) {
+  case .mainQ:
+    print(">> \(workItem) is running on mainQueue")
+  case .userQ:
+    print(">> \(workItem) is running on userQueue")
+  case .none:
+    break
+  }
+}
+
 //: Define two work items:
 // TODO first: Define work items.
 // TODO later: Call whichQueue(workItem:)
-
-
-
-
-
+let backgroundWorkItem = DispatchWorkItem {
+  task1()
+  whichQueue(workItem: "backgroundWorkItem")
+}
+let updateWorkItem = DispatchWorkItem {
+  task2()
+  whichQueue(workItem: "updateWorkItem")
+}
 
 //: Execute `updateWorkItem` after `backgroundUIWorkItem` finishes:
 print(">> Run task 2 work item after task 1 work item finishes.")
 // TODO
-
-
+userQueue.async(execute: backgroundWorkItem)
+backgroundWorkItem.notify(queue: .main, execute: updateWorkItem)
 
 //: Task 2 runs after task 1, even though task 1 takes longer.
 //:
 //: Cancel `updateWorkItem`:
 print(">> Cancel task 2 work item before task 1 work item finishes.")
 // TODO
-
-
+if !updateWorkItem.isCancelled {
+  updateWorkItem.cancel()
+}
 
 //: Now task 2 doesn't run at all.
 //:

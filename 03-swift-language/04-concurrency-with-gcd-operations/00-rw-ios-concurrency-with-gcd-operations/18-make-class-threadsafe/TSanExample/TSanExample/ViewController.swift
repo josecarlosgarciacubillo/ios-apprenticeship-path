@@ -41,10 +41,10 @@ class ViewController: UIViewController {
     super.viewDidLoad()
     
     // TSan finds race condition errors
-    changeNameRace()
+//    changeNameRace()
     
     // TSan finds no errors
-//    changeNameSafely()
+    changeNameSafely()
   }
   
   func changeNameSafely() {

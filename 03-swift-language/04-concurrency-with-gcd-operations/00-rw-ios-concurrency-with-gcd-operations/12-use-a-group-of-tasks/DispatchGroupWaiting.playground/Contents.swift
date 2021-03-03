@@ -14,23 +14,29 @@ let queue = DispatchQueue.global(qos: .userInitiated)
 queue.async(group: group) {
   print("Start task 1")
   // TODO: Sleep for 4 seconds
+  sleep(4)
   print("End task 1")
 }
 
 queue.async(group: group) {
   print("Start task 2")
   // TODO: Sleep for 1 second
+  sleep(1)
   print("End task 2")
 }
 
 group.notify(queue: DispatchQueue.global()) {
   // TODO: Announce completion, stop playground page
-
-
+  print("All tasks completed at last!")
+  PlaygroundPage.current.finishExecution()
 }
 //: The tasks continue to run, even if the wait times out.
 // TODO: Wait for 5 seconds, then for 3 seconds
-
+if group.wait(timeout: .now() + 3) == .timedOut {
+  print("I got tired of waiting.")
+} else {
+  print("All tasks have completed.")
+}
 
 
 

@@ -21,19 +21,36 @@ func asyncAdd(_ input: (Int, Int),
 }
 //: Wrap `asyncAdd` function
 // TODO: Create asyncAdd_Group
+func asyncAdd_Grpup(_ input: (Int, Int),
+                    runQueue: DispatchQueue = DispatchQueue.global(qos: .userInitiated),
+                    completionQueue: DispatchQueue = DispatchQueue.main,
+                    group: DispatchGroup,
+                    completion: @escaping (Result<Int, SlowAddError>) -> Void) {
+  group.enter()
+  asyncAdd(input) { result in
+    defer { group.leave() }
+    completionQueue.async {
+      completion(result)
+    }
+  }
+}
 
 
-
-
-
+ 
 //print("\n=== Group of async tasks ===\n")
 let wrappedGroup = DispatchGroup()
 
 for pair in numberArray {
   // TODO: use the new function here to calculate the sums of the array
-
+  asyncAdd_Grpup(pair, group: wrappedGroup) { result in
+    print("Result = \(result)")
+  }
 }
 
 // TODO: Notify of completion
+wrappedGroup.notify(queue: .main) {
+  print("WRAPPED ASYNC ADD: Completed all tasks")
+  PlaygroundPage.current.finishExecution()
+}
 
 

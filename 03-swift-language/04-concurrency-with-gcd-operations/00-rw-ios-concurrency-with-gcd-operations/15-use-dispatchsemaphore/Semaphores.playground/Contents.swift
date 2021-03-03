@@ -8,10 +8,20 @@ PlaygroundPage.current.needsIndefiniteExecution = true
 let group = DispatchGroup()
 let queue = DispatchQueue.global(qos: .userInteractive)
 // TODO: Create a semaphore that allows four concurrent accesses
-
+let semaphore = DispatchSemaphore(value: 1)
 // TODO: Simulate downloading group of images
-
-
+/*
+for i in 1...10 {
+  queue.async(group: group) {
+    semaphore.wait()
+    defer { semaphore.signal() }
+    print("Downloading image \(i)")
+    // Simulate a network wait
+    Thread.sleep(forTimeInterval: 3)
+    print("Image \(i) downloaded")
+  }
+}
+*/
 
 
 
@@ -23,16 +33,17 @@ var images: [UIImage] = []
 
 // TODO: Add semaphore argument to dataTask_Group
 func dataTask_Group_Semaphore(with url: URL,
-  group: DispatchGroup,
-  completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
+                              group: DispatchGroup,
+                              semaphore: DispatchSemaphore,
+                              completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
   // TODO: wait for semaphore before entering group
-
+  semaphore.wait()
   group.enter()
   URLSession.shared.dataTask(with: url) { data, response, error in
     defer {
       group.leave()
       // TODO: signal the semaphore after leaving the group
-      
+      semaphore.signal()
     }
     completionHandler(data, response, error)
   }.resume()
@@ -41,10 +52,11 @@ func dataTask_Group_Semaphore(with url: URL,
 for id in ids {
   guard let url = URL(string: "\(base)\(id)-jpeg.jpg") else { continue }
   // TODO: Call dataTask_Group_Semaphore
-
-  
-  
-  
+  dataTask_Group_Semaphore(with: url, group: group, semaphore: semaphore) { (data, _, error) in
+    if let data = data, let image = UIImage(data: data), error == nil {
+      images.append(image)
+    }
+  }
 }
 
 group.notify(queue: queue) {

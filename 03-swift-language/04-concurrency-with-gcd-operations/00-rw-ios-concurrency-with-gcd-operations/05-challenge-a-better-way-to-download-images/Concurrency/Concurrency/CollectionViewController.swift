@@ -59,6 +59,18 @@ final class CollectionViewController: UICollectionViewController {
     // Step 2c: Move if-closure from cellForItemAt here and fix urls capture error
     // Step 2d: Define cell (code fragment 2)
     // Step 2e: Dispatch UI tasks to main queue
+    let utilityQueue = DispatchQueue.global(qos: .utility)
+    utilityQueue.async { [weak self] in
+      guard let self = self else { return }
+      if let data = try? Data(contentsOf: self.urls[indexPath.item]),
+        let image = UIImage(data: data) {
+        DispatchQueue.main.async {
+          if let cell = self.collectionView.cellForItem(at: indexPath) as? PhotoCell {
+            cell.display(image: image)
+          }
+        }
+      }
+    }
   }
 
   private func downloadWithUrlSession(at indexPath: IndexPath) {}
@@ -72,19 +84,9 @@ extension CollectionViewController {
 
   override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
     let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "normal", for: indexPath) as! PhotoCell
-
-    // Step 2: Move and adapt this code to implement downloadWithGlobalQueue(at:) above.
-    if let data = try? Data(contentsOf: urls[indexPath.item]),
-      let image = UIImage(data: data) {
-      cell.display(image: image)
-    } else {
-      // Step 3: Keep only the next line; delete the rest of this if-else block
-      cell.display(image: nil)
-    }
-  // Step 1: Uncomment the next line
-  //    downloadWithGlobalQueue(at: indexPath)
-  //    downloadWithUrlSession(at: indexPath)
-
+    cell.display(image: nil)
+    downloadWithGlobalQueue(at: indexPath)
+    //downloadWithUrlSession(at: indexPath)
     return cell
   }
 }
