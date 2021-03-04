@@ -60,20 +60,23 @@ class TiltShiftTableViewController: UITableViewController {
     
     // Hint 1: Replace op with downloadOp, create tiltShiftOp
     // and add a dependency to tiltShiftOp.
-    let op = NetworkImageOperation(url: urls[indexPath.row])
+    let downloadOp = NetworkImageOperation(url: urls[indexPath.row])
+    let tiltShiftOp = TiltShiftOperation()
+    tiltShiftOp.addDependency(downloadOp)
 
     // Hint 2: Make this the completion block for tiltShiftOp:
-    op.completionBlock = {
+    tiltShiftOp.completionBlock = {
       DispatchQueue.main.async {
         guard let cell = tableView.cellForRow(at: indexPath)
           as? PhotoCell else { return }
         cell.isLoading = false
-        cell.display(image: op.image)
+        cell.display(image: tiltShiftOp.image)
       }
     }
 
     // Hint 3: Add your new operations to queue instead of op:
-    queue.addOperation(op)
+    queue.addOperation(downloadOp)
+    queue.addOperation(tiltShiftOp)
 
     return cell
   }

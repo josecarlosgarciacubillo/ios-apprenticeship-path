@@ -42,19 +42,26 @@ class TiltShiftOperation: Operation {
 }
 //: Create an `OperationQueue` for the filter operations:
 // TODO: Create filterQueue
-
+let filterQueue = OperationQueue()
 //: For each of the images, create a filter operation,
 //: and add it to your `OperationQueue`:
 for image in images {
   // TODO: as above
-  
+  let tsOp = TiltShiftOperation(image: image)
+  tsOp.completionBlock = {
+    appendQueue.addOperation {
+      if let outputImage = tsOp.outputImage {
+        filteredImages.append(outputImage)
+      }
+    }
+  }
   // Completion block appends each filtered image to filteredImages array
-
+  filterQueue.addOperation(tsOp)
 }
 
 //: Wait for the `OperationQueue` to finish before checking the results
 // TODO: wait
-
+filterQueue.waitUntilAllOperationsAreFinished()
 //: Inspect the filtered images
 filteredImages
 // In case the playground won't display the array of images:

@@ -20,7 +20,13 @@ class ImageLoadOperation: AsyncOperation {
   
   // TODO: Call dataTask with url and save image
   override func main() {
-
+    DispatchQueue.global().async {
+      URLSession.shared.dataTask(with: self.url) { [weak self] (data, _, error) in
+        guard let self = self, let data = data, error == nil else { return }
+        defer { self.state = .finished }
+        self.image = UIImage(data: data)
+      }.resume()
+    }
   }
 }
 //: For each `id`, create a `url`.
@@ -35,13 +41,18 @@ let queue = OperationQueue()
 for id in ids {
   guard let url = URL(string: "\(base)\(id)-jpeg.jpg") else { continue }
   // TODO: Create operation with completionBlock and add to queue
-
+  let op = ImageLoadOperation(url: url)
+  op.completionBlock = {
+    guard let image = op.image else { return }
+    images.append(image)
+  }
+  queue.addOperation(op)
 }
 
 duration {
   queue.waitUntilAllOperationsAreFinished()
 }
 
-images[7]
+images[3]
 
 PlaygroundPage.current.finishExecution()

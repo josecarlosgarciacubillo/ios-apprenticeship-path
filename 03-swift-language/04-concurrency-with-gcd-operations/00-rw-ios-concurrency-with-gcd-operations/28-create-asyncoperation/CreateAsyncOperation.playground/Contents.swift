@@ -8,14 +8,50 @@ import Foundation
 //: # Create AsyncOperation
 extension AsyncOperation {
   // TODO: Create State enum and keyPath
+  enum State: String {
+    case ready, executing, finished
+    
+    fileprivate var keyPath: String {
+      "is\(rawValue.capitalized)"
+    }
+  }
 }
 
 class AsyncOperation: Operation {
   // TODO: Create state management
-  
+  var state = State.ready {
+    willSet {
+      willChangeValue(forKey: state.keyPath)
+      willChangeValue(forKey: newValue.keyPath)
+    }
+    didSet {
+      didChangeValue(forKey: oldValue.keyPath)
+      didChangeValue(forKey: state.keyPath)
+    }
+  }
   // TODO: Override properties
-  
+  override var isExecuting: Bool {
+    state == .executing
+  }
+  override var isFinished: Bool {
+    state == .finished
+  }
+  override var isAsynchronous: Bool {
+    true
+  }
   // TODO: Override start
+  override func start() {
+    if isCancelled {
+      state = .finished
+      return
+    }
+    state = .executing
+    main()
+  }
+  
+  override func cancel() {
+    state = .finished
+  }
 }
 /*:
  `AsyncSumOperation` simply adds two numbers together asynchronously and assigns the result. It sleeps for two seconds just so that you can
@@ -38,6 +74,7 @@ class AsyncSumOperation: AsyncOperation {
       Thread.sleep(forTimeInterval: 2)
       self.result = self.lhs + self.rhs
       // TODO: Set state to finished
+      self.state = .finished
     }
   }
 }
@@ -52,10 +89,13 @@ let pairs = [(2, 3), (5, 3), (1, 7), (12, 34), (99, 99)]
 
 pairs.forEach { pair in
   // TODO: Create an AsyncSumOperation for pair
-
-
+  let op = AsyncSumOperation(lhs: pair.0, rhs: pair.1)
+  op.completionBlock = {
+    guard let result = op.result else { return }
+    print("\(pair.0) + \(pair.1) = \(result)")
+  }
   // TODO: Add the operation to queue
-
+  queue.addOperation(op)
 }
 
 // This prevents the playground from finishing prematurely.

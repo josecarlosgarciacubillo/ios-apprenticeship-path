@@ -69,3 +69,5 @@ final class NetworkImageOperation: AsyncOperation {
     }.resume()
   }
 }
+
+extension NetworkImageOperation: ImageDataProvider { }

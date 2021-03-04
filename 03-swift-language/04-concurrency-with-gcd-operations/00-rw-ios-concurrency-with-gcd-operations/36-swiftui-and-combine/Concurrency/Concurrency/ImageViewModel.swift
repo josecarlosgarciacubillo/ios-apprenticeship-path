@@ -44,17 +44,24 @@ class ImageViewModel: ObservableObject {
   }
   
   func fetchImage() {
-    _ = URLSession.shared.dataTaskPublisher(for: url)
+    let downloadPublisher = URLSession.shared.dataTaskPublisher(for: url)
       .map { UIImage(data: $0.data) }
       .replaceError(with: defaultImage)
-      .handleEvents(receiveCompletion: { completion in
-        if case let .failure(err) = completion {
-          print("Retrieving data failed with error \(err)")
-        }
-      })
+    
+    let filterPublisher = downloadPublisher.map {
+      TiltShiftOperation(inputImage:
+        $0 ?? self.defaultImage).$outputImage }
+    
+    Publishers.Zip(downloadPublisher, filterPublisher)
       .receive(on: RunLoop.main)
-      .assign(to: \.image, on: self)
-      .store(in: &disposables)
+      .sink(receiveValue: {
+        $1.receive(on: RunLoop.main)
+        .sink(receiveValue: {
+          self.image = $0 ?? self.defaultImage
+        })
+        .store(in: &self.disposables)
+      })
+      .store(in: &self.disposables)
   }
   
 }

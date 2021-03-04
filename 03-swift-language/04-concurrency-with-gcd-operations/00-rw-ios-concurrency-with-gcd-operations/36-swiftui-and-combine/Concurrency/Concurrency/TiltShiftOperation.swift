@@ -31,33 +31,35 @@
 /// THE SOFTWARE.
 
 import SwiftUI
-import Combine
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-  var window: UIWindow?
-  private var subscriptions = Set<AnyCancellable>()
-  
-  func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+final class TiltShiftOperation: ObservableObject {
+  @Published var outputImage: UIImage?
+  private static let context = CIContext()
+  var inputImage: UIImage?
 
-    guard let plist = Bundle.main.url(forResource: "Photos", withExtension: "plist"),
-          let contents = try? Data(contentsOf: plist),
-          let serial = try? PropertyListSerialization.propertyList(from: contents, format: nil),
-          let serialUrls = serial as? [String] else {
-      print("Something went horribly wrong!")
-      return
-    }
-
-    // Create the SwiftUI view that provides the window contents.
-    let imageListView = ImageListView(urls: serialUrls.compactMap { URL(string: $0) })
-    
-    // Use a UIHostingController as window root view controller.
-    if let windowScene = scene as? UIWindowScene {
-      let window = UIWindow(windowScene: windowScene)
-      window.rootViewController = UIHostingController(rootView: imageListView)
-      self.window = window
-      window.makeKeyAndVisible()
+  init(inputImage: UIImage) {
+    self.inputImage = inputImage
+    DispatchQueue.global(qos: .userInteractive).async {
+      self.filterImage(image: self.inputImage!)
     }
   }
   
-}
+   func filterImage(image: UIImage) {
+    guard let filter = TiltShiftFilter(image: image),
+      let output = filter.outputImage else {
+        print("Failed to generate tilt shift image")
+        return
+    }
 
+    let fromRect = CGRect(origin: .zero, size: inputImage!.size)
+    guard let cgImage = TiltShiftOperation.context.createCGImage(output, from: fromRect) else {
+      print("No image generated")
+      return
+    }
+
+    DispatchQueue.main.async {
+      self.outputImage = UIImage(cgImage: cgImage)
+      print(">>> filterImage done <<<")
+    }
+  }
+}

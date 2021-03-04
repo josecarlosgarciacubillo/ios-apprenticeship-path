@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		CD6234B523725BAA003E3BF8 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6234B423725BAA003E3BF8 /* ImageView.swift */; };
 		CD6234B923765134003E3BF8 /* ImageListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6234B823765134003E3BF8 /* ImageListView.swift */; };
+		CD724996237B711200054BDF /* TiltShiftFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD724994237B711200054BDF /* TiltShiftFilter.swift */; };
+		CD724997237B711200054BDF /* TiltShiftOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD724995237B711200054BDF /* TiltShiftOperation.swift */; };
 		CDDEF0EC23714A9500539F39 /* ImageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDDEF0EB23714A9500539F39 /* ImageViewModel.swift */; };
 		CDE32B3D235E9A7000121CBB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDE32B3C235E9A7000121CBB /* AppDelegate.swift */; };
 		CDE32B3F235E9A7000121CBB /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDE32B3E235E9A7000121CBB /* SceneDelegate.swift */; };
@@ -16,12 +18,13 @@
 		CDE32B46235E9A7200121CBB /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CDE32B45235E9A7200121CBB /* Preview Assets.xcassets */; };
 		CDE32B49235E9A7200121CBB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CDE32B47235E9A7200121CBB /* LaunchScreen.storyboard */; };
 		CDE32B5123600EBD00121CBB /* Photos.plist in Resources */ = {isa = PBXBuildFile; fileRef = CDE32B5023600EBD00121CBB /* Photos.plist */; };
-		CDF39062237FEF7A00A6FA8D /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CDF39061237FEF7A00A6FA8D /* Default-568h@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		CD6234B423725BAA003E3BF8 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		CD6234B823765134003E3BF8 /* ImageListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageListView.swift; sourceTree = "<group>"; };
+		CD724994237B711200054BDF /* TiltShiftFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TiltShiftFilter.swift; sourceTree = "<group>"; };
+		CD724995237B711200054BDF /* TiltShiftOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TiltShiftOperation.swift; sourceTree = "<group>"; };
 		CDDEF0EB23714A9500539F39 /* ImageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewModel.swift; sourceTree = "<group>"; };
 		CDE32B39235E9A7000121CBB /* Concurrency.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Concurrency.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDE32B3C235E9A7000121CBB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -31,7 +34,6 @@
 		CDE32B48235E9A7200121CBB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CDE32B4A235E9A7200121CBB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CDE32B5023600EBD00121CBB /* Photos.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Photos.plist; sourceTree = "<group>"; };
-		CDF39061237FEF7A00A6FA8D /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,8 +69,10 @@
 				CD6234B823765134003E3BF8 /* ImageListView.swift */,
 				CD6234B423725BAA003E3BF8 /* ImageView.swift */,
 				CDDEF0EB23714A9500539F39 /* ImageViewModel.swift */,
+				CD724995237B711200054BDF /* TiltShiftOperation.swift */,
+				CD724994237B711200054BDF /* TiltShiftFilter.swift */,
+				CDF3906323800DD900A6FA8D /* Supporting Files */,
 				CDE32B4A235E9A7200121CBB /* Info.plist */,
-				CDF39060237FEE1800A6FA8D /* Supporting Files */,
 				CDE32B44235E9A7200121CBB /* Preview Content */,
 			);
 			path = Concurrency;
@@ -82,13 +86,12 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
-		CDF39060237FEE1800A6FA8D /* Supporting Files */ = {
+		CDF3906323800DD900A6FA8D /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
 				CDE32B3C235E9A7000121CBB /* AppDelegate.swift */,
 				CDE32B3E235E9A7000121CBB /* SceneDelegate.swift */,
 				CDE32B42235E9A7200121CBB /* Assets.xcassets */,
-				CDF39061237FEF7A00A6FA8D /* Default-568h@2x.png */,
 				CDE32B5023600EBD00121CBB /* Photos.plist */,
 				CDE32B47235E9A7200121CBB /* LaunchScreen.storyboard */,
 			);
@@ -156,7 +159,6 @@
 				CDE32B49235E9A7200121CBB /* LaunchScreen.storyboard in Resources */,
 				CDE32B46235E9A7200121CBB /* Preview Assets.xcassets in Resources */,
 				CDE32B43235E9A7200121CBB /* Assets.xcassets in Resources */,
-				CDF39062237FEF7A00A6FA8D /* Default-568h@2x.png in Resources */,
 				CDE32B5123600EBD00121CBB /* Photos.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -169,10 +171,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD6234B923765134003E3BF8 /* ImageListView.swift in Sources */,
+				CD724996237B711200054BDF /* TiltShiftFilter.swift in Sources */,
 				CD6234B523725BAA003E3BF8 /* ImageView.swift in Sources */,
 				CDE32B3D235E9A7000121CBB /* AppDelegate.swift in Sources */,
 				CDE32B3F235E9A7000121CBB /* SceneDelegate.swift in Sources */,
 				CDDEF0EC23714A9500539F39 /* ImageViewModel.swift in Sources */,
+				CD724997237B711200054BDF /* TiltShiftOperation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
