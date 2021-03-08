@@ -1,0 +1,3 @@
+target 'WizekodCoreTesting' do
+  pod 'WizekodCore', '~> 0.3'
+end
